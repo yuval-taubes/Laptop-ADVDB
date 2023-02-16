@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Laptop.Data;
 using Laptop.Models;
+using Laptop.Models.ViewModels;
 
 namespace Laptop.Controllers
 {
@@ -22,7 +23,7 @@ namespace Laptop.Controllers
         // GET: Laptops
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Laptop.ToListAsync());
+            return View(await _context.Laptop.ToListAsync());
         }
 
         // GET: Laptops/Details/5
@@ -35,6 +36,7 @@ namespace Laptop.Controllers
 
             var laptop = await _context.Laptop
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (laptop == null)
             {
                 return NotFound();
@@ -46,7 +48,9 @@ namespace Laptop.Controllers
         // GET: Laptops/Create
         public IActionResult Create()
         {
-            return View();
+            LaptopCRUD vm = new LaptopCRUD();
+            vm.Brands = _context.Brand.ToList();
+            return View(vm);
         }
 
         // POST: Laptops/Create
@@ -54,15 +58,22 @@ namespace Laptop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Model,BrandId,Price,Year")] Laptop.Models.Laptop laptop)
+        public async Task<IActionResult> Create(LaptopCRUD vm)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(laptop);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(laptop);
+            vm.Brands = _context.Brand.ToList();
+
+            LaptopObject laptop = new LaptopObject();
+            laptop.Model = vm.Model;
+            laptop.Price = vm.Price;
+            laptop.Year = vm.Year;
+            laptop.BrandId = vm.BrandId;
+            laptop.Brand = _context.Brand.First(x => x.Id == laptop.BrandId);
+
+            _context.Laptop.Add(laptop);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+            return View(vm);
         }
 
         // GET: Laptops/Edit/5
@@ -78,7 +89,9 @@ namespace Laptop.Controllers
             {
                 return NotFound();
             }
-            return View(laptop);
+            LaptopCRUD vm = new LaptopCRUD();
+            vm.Brands = _context.Brand.ToList();
+            return View(vm);
         }
 
         // POST: Laptops/Edit/5
@@ -86,8 +99,14 @@ namespace Laptop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Model,BrandId,Price,Year")] Laptop.Models.Laptop laptop)
+        public async Task<IActionResult> Edit(int id, LaptopCRUD vm)
         {
+            LaptopObject laptop = new LaptopObject();
+            laptop.Model = vm.Model;
+            laptop.Price = vm.Price;
+            laptop.Year = vm.Year;
+            laptop.BrandId = vm.BrandId;
+
             if (id != laptop.Id)
             {
                 return NotFound();
@@ -148,14 +167,14 @@ namespace Laptop.Controllers
             {
                 _context.Laptop.Remove(laptop);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool LaptopExists(int id)
         {
-          return _context.Laptop.Any(e => e.Id == id);
+            return _context.Laptop.Any(e => e.Id == id);
         }
     }
 }

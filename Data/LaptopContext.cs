@@ -16,6 +16,6 @@ namespace Laptop.Data
 
         public DbSet<Laptop.Models.Brand> Brand { get; set; } = default!;
 
-        public DbSet<Laptop.Models.Laptop> Laptop { get; set; }
+        public DbSet<Laptop.Models.LaptopObject> Laptop { get; set; }
     }
 }

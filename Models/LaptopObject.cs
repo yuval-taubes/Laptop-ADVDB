@@ -1,6 +1,6 @@
 ﻿namespace Laptop.Models
 {
-    public class Laptop
+    public class LaptopObject
     {
         public int Id { get; set; }
 
@@ -11,5 +11,7 @@
         public int Price { get; set; }
 
         public int Year { get; set; }
+
+        public Brand Brand { get; set; } = null!;
     }
 }

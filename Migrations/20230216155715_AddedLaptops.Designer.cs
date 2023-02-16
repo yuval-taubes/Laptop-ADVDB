@@ -3,6 +3,7 @@ using Laptop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Laptop.Migrations
 {
     [DbContext(typeof(LaptopContext))]
-    partial class LaptopContextModelSnapshot : ModelSnapshot
+    [Migration("20230216155715_AddedLaptops")]
+    partial class AddedLaptops
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,20 +64,7 @@ namespace Laptop.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
                     b.ToTable("Laptop");
-                });
-
-            modelBuilder.Entity("Laptop.Models.LaptopObject", b =>
-                {
-                    b.HasOne("Laptop.Models.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Brand");
                 });
 #pragma warning restore 612, 618
         }
