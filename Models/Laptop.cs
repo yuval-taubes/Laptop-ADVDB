@@ -4,22 +4,12 @@
     {
         public int Id { get; set; }
 
-        public string Model { get; set; }
+        public string Model { get; set; } = null!;
 
-        public Brand Brand { get; set; }
+        public int BrandId { get; set; }
 
         public int Price { get; set; }
 
         public int Year { get; set; }
-
-        public Laptop(int id, string model, Brand brand, int price, int year)
-        {
-            Id = id;
-            Model = model;
-            Brand = brand;
-            Price = price;
-            Year = year;
-        }
-
     }
 }
