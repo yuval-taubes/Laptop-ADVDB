@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Laptop.Data;
 namespace Laptop
 {
     public class Program
@@ -5,6 +8,8 @@ namespace Laptop
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<LaptopContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("LaptopContext") ?? throw new InvalidOperationException("Connection string 'LaptopContext' not found.")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
