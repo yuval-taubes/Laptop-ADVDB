@@ -1,0 +1,16 @@
+﻿@model List<LaptopObject>
+
+}
+<div class="row">
+    @foreach (LaptopObject laptop in Model)
+    {
+        <div class="col-md-6">
+            <p> Model: @laptop.Model</p>
+            <p>Price: @laptop.Price</p>
+            <p>Id: @laptop.Id</p>
+            <p>Year: @laptop.Year  </p>
+            <p> Model: @laptop.BrandName</p>
+        </div>
+    }
+
+</div>

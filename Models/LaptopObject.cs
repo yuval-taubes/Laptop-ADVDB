@@ -8,10 +8,11 @@
 
         public int BrandId { get; set; }
 
+        public string BrandName { get; set; } = null!;
+
         public int Price { get; set; }
 
         public int Year { get; set; }
 
-        public Brand Brand { get; set; } = null!;
     }
 }

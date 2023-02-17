@@ -1,0 +1,47 @@
+﻿@model Laptop.Models.ViewModels.BudgetLaptopViewModel;
+
+<form method="post">
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <label asp-for="Budget" class="form-label"></label>
+            <input asp-for="Budget" class="form-control" />
+
+        </div>
+    </div>
+    <input type="submit" class="btn btn-primary mt-2 mb-4 w" />
+
+</form>
+
+@if (Model.Result.Count == 0 && Model.Budget != 0)
+{
+    <h2>No Laptops fit Budget</h2>
+}
+@if (Model.Result.Count > 0 && Model.Budget != 0)
+{
+    <h1> Laptops in your Badget</h1>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Brand</th>
+                    <th scope="col">Model</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Id</th>
+                </tr>
+            </thead>
+            @foreach (var laptop in Model.Result)
+            {
+                <tbody>
+                    <tr>
+                        <td>@laptop.BrandName</td>
+                        <td>@laptop.Model</td>
+                        <td>@laptop.Price</td>
+                        <td>@laptop.Year</td>
+                        <td>@laptop.Id</td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+    </div>
+}

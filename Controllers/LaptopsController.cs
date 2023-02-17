@@ -18,6 +18,8 @@ namespace Laptop.Controllers
         public LaptopsController(LaptopContext context)
         {
             _context = context;
+
+            
         }
 
         // GET: Laptops
@@ -67,7 +69,7 @@ namespace Laptop.Controllers
             laptop.Price = vm.Price;
             laptop.Year = vm.Year;
             laptop.BrandId = vm.BrandId;
-            laptop.Brand = _context.Brand.First(x => x.Id == laptop.BrandId);
+            laptop.BrandName = _context.Brand.First(x => x.Id == laptop.BrandId).Name;
 
             _context.Laptop.Add(laptop);
             await _context.SaveChangesAsync();
@@ -111,28 +113,23 @@ namespace Laptop.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(laptop);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LaptopExists(laptop.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(laptop);
+                await _context.SaveChangesAsync();
             }
-            return View(laptop);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LaptopExists(laptop.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+             return RedirectToAction(nameof(Index));
         }
 
         // GET: Laptops/Delete/5
@@ -176,5 +173,48 @@ namespace Laptop.Controllers
         {
             return _context.Laptop.Any(e => e.Id == id);
         }
+
+        public IActionResult ExpensiveLaptop()
+        {
+            List<LaptopObject> sortedByPrice = _context.Laptop.OrderByDescending(x => x.Price).Take(2).ToList();
+            return View(sortedByPrice);
+        }
+        public IActionResult CheapestLaptop()
+        {
+            List<LaptopObject> sortedByPrice = _context.Laptop.OrderBy(x => x.Price).Take(3).ToList();
+            return View(sortedByPrice);
+        }
+
+        public IActionResult LaptopInBudget()
+        {
+            BudgetLaptopViewModel vm = new BudgetLaptopViewModel();
+            return View(vm);
+        }
+        [HttpPost]
+        public IActionResult LaptopInBudget(BudgetLaptopViewModel vm)
+        {
+            List<LaptopObject> result = _context.Laptop.Where(x => x.Price <= vm.Budget).ToList();
+            vm.Result = result;
+            return View(vm);
+        }
+
+
+        //public IActionResult CompareLaptops()
+        //{
+        //    CompareLaptopViewModel vm = new CompareLaptopViewModel();
+        //    vm.Laptops = Database.Laptops;
+        //    return View(vm);
+        //}
+
+        //[HttpPost]
+        //public IActionResult CompareLaptops(CompareLaptopViewModel vm)
+        //{
+        //    vm.Laptops = Database.Laptops;
+        //    //it says it might be null, but it wont be as its a dropdown list, meaning only allowed values will be selected
+        //    vm.Laptop1 = Database.Laptops.FirstOrDefault(x => x.Id == vm.Laptop1Id);
+        //    vm.Laptop2 = Database.Laptops.FirstOrDefault(x => x.Id == vm.Laptop2Id);
+
+        //    return View(vm);
+        //}
     }
 }
