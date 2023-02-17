@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Laptop.Data;
 using Laptop.Models;
+using Laptop.Models.ViewModels;
 
 namespace Laptop.Controllers
 {
@@ -156,6 +157,55 @@ namespace Laptop.Controllers
         private bool BrandExists(int id)
         {
           return _context.Brand.Any(e => e.Id == id);
+        }
+
+        public IActionResult LaptopsByBrand()
+        {
+            IEnumerable<IGrouping<int, LaptopObject>> result = _context.Laptop.GroupBy(x => x.BrandId, x => x);
+            return View(result);
+        }
+        public IActionResult LaptopByBrandOrdering()
+        {
+            LaptopByBrandOrderingViewModel vm = new LaptopByBrandOrderingViewModel();
+            vm.Brands = _context.Brand.ToList();
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult LaptopByBrandOrdering(LaptopByBrandOrderingViewModel vm)
+        {
+            vm.Brands = _context.Brand.ToList();
+            List<LaptopObject> result = new List<LaptopObject>();
+            result = _context.Laptop.Where(x => x.BrandId == vm.BrandChoice).ToList();
+            /*
+             *             
+            "Order By Price Ascending",
+            "Order By Price Descending",
+            "Order By Year Ascending",
+            "Order By Year Descending"
+             */
+            if (vm.OrderChoice == "Order By Price Ascending")
+            {
+                result = result.OrderBy(x => x.Price).ToList();
+            }
+            else if (vm.OrderChoice == "Order By Price Descending")
+            {
+                result = result.OrderByDescending(x => x.Price).ToList();
+            }
+            else if (vm.OrderChoice == "Order By Year Ascending")
+            {
+                result = result.OrderBy(x => x.Year).ToList();
+            }
+            else if (vm.OrderChoice == "Order By Year Descending")
+            {
+                result = result.OrderByDescending(x => x.Year).ToList();
+            }
+            else
+            {
+                result = result;
+            }
+            vm.ResultLaptops = result;
+            return View(vm);
         }
     }
 }
